@@ -91,7 +91,7 @@ public class PlayerController : MonoBehaviour
         movement.y += Physics.gravity.y * Time.deltaTime * gravityMod;
         charCon.Move(movement * Time.deltaTime);
 
-        //shooting with overheating
+        //shooting
         if(!overHeated)
         {
             if (Input.GetMouseButtonDown(0))
@@ -109,11 +109,14 @@ public class PlayerController : MonoBehaviour
             heatCounter -= coolRate * Time.deltaTime;
         }
         else
+        //overheating
         {
             heatCounter -= overheatCoolRate * Time.deltaTime;
             if (heatCounter <= 0)
             {
                 overHeated = false;
+
+                UIController.instance.overHeatedMessage.gameObject.SetActive(false);
             }
         }
         if (heatCounter < 0)
@@ -157,6 +160,8 @@ public class PlayerController : MonoBehaviour
         {
             heatCounter = maxHeat;
             overHeated = true;
+
+            UIController.instance.overHeatedMessage.gameObject.SetActive(true);
         }
     }
 
