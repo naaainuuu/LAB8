@@ -253,7 +253,11 @@ MonoBehaviour:
     m_Bits: 64
   bulletImpact: {fileID: 5086280973735050153, guid: b9f69a91008f24244afb12c8745207fb,
     type: 3}
-  timeBetweenShots: 0
+  timeBetweenShots: 0.1
+  maxHeat: 10
+  heatPerShot: 1
+  coolRate: 4
+  overheatCoolRate: 5
 --- !u!143 &166456654
 CharacterController:
   m_ObjectHideFlags: 0
