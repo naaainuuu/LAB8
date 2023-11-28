@@ -5,21 +5,24 @@ public class PlayerController : MonoBehaviour
 {
     public Transform viewPoint;
     public float mouseSensivity = 1f;
-    public bool invertLook;
-    public float moveSpeed = 5f, runSpeed = 8f;
-    public float activeMoveSpeed;
-    public float jumpForce = 12f, gravityMod = 2.5f;
-
-
-    public CharacterController charCon;
-    
-
     private float verticalRotStore;
     private Vector2 mouseInput;
+
+    public bool invertLook;
+    
+    public float moveSpeed = 5f, runSpeed = 8f;
+    public float activeMoveSpeed;
     private Vector3 moveDir, movement;
 
+    public CharacterController charCon;  
 
     private Camera cam;
+
+    public float jumpForce = 12f, gravityMod = 2.5f;
+
+    public Transform groundCheckPoint;
+    private bool isGrounded;
+    public LayerMask groundlayers;
 
     void Start()
     {
@@ -61,7 +64,9 @@ public class PlayerController : MonoBehaviour
             movement.y = 0f;
         }
 
-        if(Input.GetButtonDown("Jump"))
+        isGrounded = Physics.Raycast(groundCheckPoint.position, Vector3.down, .25f, groundlayers);
+
+        if(Input.GetButtonDown("Jump") && isGrounded)
         {
             movement.y = jumpForce;
         }
