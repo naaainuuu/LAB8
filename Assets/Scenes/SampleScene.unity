@@ -396,6 +396,10 @@ MonoBehaviour:
   heatPerShot: 1
   coolRate: 4
   overheatCoolRate: 5
+  allGuns:
+  - {fileID: 537833205}
+  - {fileID: 23893672}
+  - {fileID: 474319743}
 --- !u!143 &166456654
 CharacterController:
   m_ObjectHideFlags: 0
