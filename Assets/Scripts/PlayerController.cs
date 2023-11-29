@@ -27,6 +27,8 @@ public class PlayerController : MonoBehaviour
     public GameObject bulletImpact;
     //public float timeBetweenShots = 0.5f;
     private float shotCounter;
+    public float muzzleDisplayTime;
+    private float muzzleCounter;
 
     public float maxHeat = 10f, /*heatPerShot = .1f,*/ coolRate = 4f, overheatCoolRate = 5f;
     private float heatCounter;
@@ -41,6 +43,9 @@ public class PlayerController : MonoBehaviour
         cam = Camera.main;
         UIController.instance.weaponTempSlider.maxValue = maxHeat;
         SwitchGun();
+        Transform newTrans = SpawnManager.instance.GetSpawnPoint();
+        transform.position = newTrans.position;
+        transform.rotation = newTrans.rotation;
     }
 
     void Update()
@@ -94,6 +99,17 @@ public class PlayerController : MonoBehaviour
         //gravity
         movement.y += Physics.gravity.y * Time.deltaTime * gravityMod;
         charCon.Move(movement * Time.deltaTime);
+
+        if (allGuns[selectedGun].muzzleFlash.activeInHierarchy)
+        {
+            muzzleCounter -= Time.deltaTime;
+            if(muzzleCounter <= 0)
+            {
+                allGuns[selectedGun].muzzleFlash.SetActive(false);
+            }
+            
+        }
+        
 
         //shooting
         if(!overHeated)
@@ -188,6 +204,8 @@ public class PlayerController : MonoBehaviour
 
             UIController.instance.overHeatedMessage.gameObject.SetActive(true);
         }
+        allGuns[selectedGun].muzzleFlash.SetActive(true);
+        muzzleCounter = muzzleDisplayTime;
     }
 
     void LateUpdate()
@@ -205,6 +223,8 @@ public class PlayerController : MonoBehaviour
         }
 
         allGuns[selectedGun].gameObject.SetActive(true);
+
+        allGuns[selectedGun].muzzleFlash.SetActive(false);
 
     }
 
