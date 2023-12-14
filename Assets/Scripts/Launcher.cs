@@ -3,6 +3,7 @@ using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using UnityEditor.Timeline;
 using UnityEngine;
 
 public class Launcher : MonoBehaviourPunCallbacks
@@ -11,11 +12,16 @@ public class Launcher : MonoBehaviourPunCallbacks
     public GameObject loadingScreen;
     public TMP_Text loadingText;
 
+    public GameObject menuButtons;
+
     public GameObject createRoomScreen;
     public TMP_InputField roomNameInput;
 
-    public GameObject createdRoom;
-    public TMP_Text createdRoomText;
+    public GameObject roomScreen;
+    public TMP_Text roomNameText;
+
+    public GameObject errorScreen;
+    public TMP_Text errorText;
 
 
 
@@ -23,36 +29,41 @@ public class Launcher : MonoBehaviourPunCallbacks
     {
         instance = this;
     }
-    // Start is called before the first frame update
-    void Start()
+
+    private void Start()
     {
+        CloseMenus();
         loadingScreen.SetActive(true);
-        loadingText.text = "Connecting....";
+        loadingText.text = "Connecting to network...";
 
         PhotonNetwork.ConnectUsingSettings();
 
     }
 
-    // Update is called once per frame
-    void Update()
+    void CloseMenus()
     {
-        
+        loadingScreen.SetActive(false);
+        menuButtons.SetActive(false);
+        createRoomScreen.SetActive(false);
+        roomScreen.SetActive(false);
+        errorScreen.SetActive(false);
     }
 
     public override void OnConnectedToMaster()
     {
         PhotonNetwork.JoinLobby();
-        loadingText.text = "joining lobby";
+        loadingText.text = "Joining Lobby...";
     }
 
     public override void OnJoinedLobby()
     {
-        loadingScreen.SetActive(false);
-        OpenCreateRoomScreen();
+        CloseMenus();
+        menuButtons.SetActive(true);
     }
 
-    public void OpenCreateRoomScreen()
+    public void OpenRoomCreate()
     {
+        CloseMenus();
         createRoomScreen.SetActive(true);
     }
 
@@ -60,29 +71,47 @@ public class Launcher : MonoBehaviourPunCallbacks
     {
         if(!string.IsNullOrEmpty(roomNameInput.text))
         {
-            RoomOptions roomOptions = new RoomOptions();
-            roomOptions.MaxPlayers = 10;
+            RoomOptions options = new RoomOptions();
+            options.MaxPlayers = 8;
 
-            PhotonNetwork.CreateRoom(roomNameInput.text);
-
+            PhotonNetwork.CreateRoom(roomNameInput.text, options);
+            CloseMenus();
+            loadingText.text = "Creating Room...";
             loadingScreen.SetActive(true);
-            loadingText.text = "Creating Room....";
         }
     }
 
-    public override void OnCreatedRoom()
+    public override void OnJoinedRoom()
     {
-        loadingScreen.SetActive(false);
-        createdRoom.SetActive(true);
-        createdRoomText.text = PhotonNetwork.CurrentRoom.Name;
+        CloseMenus();
+        roomScreen.SetActive(true);
+        roomNameText.text = PhotonNetwork.CurrentRoom.Name;
+    }
+
+    public override void OnCreateRoomFailed(short returnCode, string message)
+    {
+        errorText.text = "Failed to create room: " + message;
+        CloseMenus();
+        errorScreen.SetActive(true);
+    }
+
+    public void CloseErrorScreen()
+    {
+        CloseMenus();
+        menuButtons.SetActive(true);
     }
 
     public void LeaveRoom()
     {
-        createdRoom.SetActive(false);
-        loadingScreen.SetActive(true);
-        loadingText.text = "Leaving Room";
         PhotonNetwork.LeaveRoom();
+        CloseMenus();
+        loadingText.text = "Leaving Room...";
+        loadingScreen.SetActive(true);
     }
 
+    public override void OnLeftRoom()
+    {
+        CloseMenus();
+        menuButtons.SetActive(true);
+    }
 }
