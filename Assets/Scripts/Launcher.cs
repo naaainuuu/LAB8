@@ -281,7 +281,7 @@ public class Launcher : MonoBehaviourPunCallbacks
         RoomOptions options = new RoomOptions();
         options.MaxPlayers = 8;
 
-        PhotonNetwork.CreateRoom("Test", options);
+        PhotonNetwork.CreateRoom("Test", options );
         loadingText.text = "Creating Room";
         loadingScreen.SetActive(true);
     }
